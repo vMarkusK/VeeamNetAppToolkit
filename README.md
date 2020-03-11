@@ -1,5 +1,8 @@
 # vSphereNetAppToolkit PowerShell Module
 
+[![Build status](https://ci.appveyor.com/api/projects/status/tnbdo5mf3c1iqn8l?svg=true)](https://ci.appveyor.com/project/mycloudrevolution/veeamnetapptoolkit)
+
+
 ## About
 
 ### Project Owner
