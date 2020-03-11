@@ -94,7 +94,7 @@ Properties {
         'examples',
         'helper',
         'media',
-        'Tests',
+        'tests',
         '.git*',
         '.vscode',
         # These files are unique to this examples dir.
