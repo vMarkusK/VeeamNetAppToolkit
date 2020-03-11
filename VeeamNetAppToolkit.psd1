@@ -110,7 +110,7 @@ PrivateData = @{
         ReleaseNotes = 'https://github.com/mycloudrevolution/VeeamNetAppToolkit/blob/master/ReleaseNotes.md'
 
         # External Module Dependencies
-        # ExternalModuleDependencies = @('')
+        ExternalModuleDependencies = @('DataONTAP')
 
     } # End of PSData hashtable
 
