@@ -268,7 +268,7 @@ Task GenerateMarkdown -requiredVariables DefaultLocale, DocsRootDir, ModuleName,
         }
 
         # ErrorAction set to SilentlyContinue so this command will not overwrite an existing MD file.
-        [Threading.Thread]::CurrentThread.CurrentUICulture = 'en-US'; New-MarkdownHelp -Module $ModuleName -Locale $DefaultLocale -OutputFolder $DocsRootDir\$DefaultLocale `
+        [Threading.Thread]::CurrentThread.CurrentUICulture = 'en-US'; New-MarkdownHelp -Module $ModuleName -Locale $DefaultLocale -Force -OutputFolder $DocsRootDir\$DefaultLocale `
                          -WithModulePage:$false -ErrorAction SilentlyContinue -Verbose:$VerbosePreference > $null
     }
     finally {

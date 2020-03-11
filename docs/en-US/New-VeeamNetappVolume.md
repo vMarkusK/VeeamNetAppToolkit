@@ -116,7 +116,7 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 ## NOTES
 File Name  : New-VeeamNetappVolume.psm1
 Author     : Markus Kraus
-Version    : 1.0
+Version    : 0.1
 State      : Dev
 
 ## RELATED LINKS
