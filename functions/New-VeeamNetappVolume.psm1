@@ -13,6 +13,10 @@ function New-VeeamNetappVolume {
         https://mycloudrevolution.com/
 
     .EXAMPLE
+    New-VeeamNetappVolume -VeeamCacheRepo 'Default Backup Repository' -VolType NFS -IP 10.0.2.16 `
+    -ExportPolicyName veeam -VolName vol_nfs_001 -VolSize 1 -NetAppAggregate aggr1_data01 `
+    -NetAppVserver svm_veeam_nfs -NetAppInterface svm_veeam_nfs_nfs_lif1 -NetAppSnapshotPolicy default
+
 
     .PARAMETER Type
     Type of the new Volume
