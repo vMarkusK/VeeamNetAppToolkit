@@ -44,10 +44,15 @@ Add-PSSnapin VeeamPSSnapin
 Connect-VBRServer -Server localhost
 ```
 
-## Funtions
+## Functions
+
+### New-VeeamNetappVolume
+
+[![Watch the video](https://img.youtube.com/vi/n-ylGAn14jA/maxresdefault.jpg)](https://www.youtube.com/watch?v=n-ylGAn14jA)
+
 
 ```PowerShell
-New-VeeamNetappVolume -VeeamCacheRepo 'Default Backup Repository' -VolType NFS -IP 10.0.2.16 -ExportPolicyName veeam `
--VolName vol_nfs_001 -VolSize 1 -NetAppAggregate aggr1_data01 -NetAppVserver svm_veeam_nfs `
--NetAppInterface svm_veeam_nfs_nfs_lif1 -NetAppSnapshotPolicy default
+New-VeeamNetappVolume -VeeamCacheRepo 'Default Backup Repository' -VolType NFS -IP 10.0.2.16 `
+-ExportPolicyName veeam -VolName vol_nfs_001 -VolSize 1 -NetAppAggregate aggr1_data01 `
+-NetAppVserver svm_veeam_nfs -NetAppInterface svm_veeam_nfs_nfs_lif1 -NetAppSnapshotPolicy default
 ```
