@@ -2,6 +2,8 @@
 
 [![The MIT License](https://img.shields.io/badge/license-MIT-orange.svg?style=flat-square)](http://opensource.org/licenses/MIT)
 [![Build status](https://ci.appveyor.com/api/projects/status/tnbdo5mf3c1iqn8l?svg=true)](https://ci.appveyor.com/project/mycloudrevolution/veeamnetapptoolkit)
+[![Documentation Status](https://readthedocs.org/projects/veeamnetapptoolkit/badge/?version=latest)](https://veeamnetapptoolkit.readthedocs.io/en/latest/?badge=latest)
+
 
 
 ## About
