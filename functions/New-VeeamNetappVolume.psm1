@@ -17,26 +17,32 @@ function New-VeeamNetappVolume {
     .PARAMETER Type
     Type of the new Volume
 
+    .PARAMETER IP
+    IP for the NFS Export
+
     .PARAMETER VolName
-        Name of the new Volume
+    Name of the new Volume
 
     .PARAMETER VolSize
-        Size of the new Volume in GB
+    Size of the new Volume in GB
 
     .PARAMETER NetAppAggregateName
-        Name of the Aggregate where the Volume is created
+     Name of the Aggregate where the Volume is created
 
     .PARAMETER NetAppVserverName
-        Name of the SVM where the Volume is created
+    Name of the SVM where the Volume is created
 
     .PARAMETER NetAppInterfaceName
-        Name of the Interface that should be used for the mount
+    Name of the Interface that should be used for the mount
+
+    .PARAMETER VeeamCacheRepo
+    The Veeam Cache Repo Name
 
     #>
 
     [CmdletBinding()]
     Param (
-        [Parameter(Mandatory=$True, ValueFromPipeline=$False, HelpMessage="Name of the new Volume")]
+        [Parameter(Mandatory=$True, ValueFromPipeline=$False, HelpMessage="Type of the new Volume")]
         [ValidateNotNullorEmpty()]
         [ValidateSet("NFS")]
             [String]$VolType,

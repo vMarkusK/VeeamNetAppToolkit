@@ -9,7 +9,7 @@
 
 Markus Kraus [@vMarkus_K](https://twitter.com/vMarkus_K)
 
-MY CLOUD-(R)EVOLUTION [mycloudrevolution.com](http://mycloudrevolution.com/)
+my cloud-(r)evolution [mycloudrevolution.com](http://mycloudrevolution.com/)
 
 ### Project WebSite
 
