@@ -1,16 +1,16 @@
 function New-VeeamNetappVolume {
     <#
     .DESCRIPTION
-        Creates a new a NetApp Volume and adds it to Veeam Configuration as a NAS Backup Job.
+    Creates a new a NetApp Volume and adds it to Veeam Configuration as a NAS Backup Job.
 
     .NOTES
-        File Name  : New-VeeamNetappVolume.psm1
-        Author     : Markus Kraus
-        Version    : 1.0
-        State      : Dev
+    File Name  : New-VeeamNetappVolume.psm1
+    Author     : Markus Kraus
+    Version    : 1.0
+    State      : Dev
 
     .LINK
-        https://mycloudrevolution.com/
+    https://mycloudrevolution.com/
 
     .EXAMPLE
     New-VeeamNetappVolume -VeeamCacheRepo 'Default Backup Repository' -VolType NFS -IP 10.0.2.16 `
