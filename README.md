@@ -1,5 +1,6 @@
 # vSphereNetAppToolkit PowerShell Module
 
+[![The MIT License](https://img.shields.io/badge/license-MIT-orange.svg?style=flat-square)](http://opensource.org/licenses/MIT)
 [![Build status](https://ci.appveyor.com/api/projects/status/tnbdo5mf3c1iqn8l?svg=true)](https://ci.appveyor.com/project/mycloudrevolution/veeamnetapptoolkit)
 
 
