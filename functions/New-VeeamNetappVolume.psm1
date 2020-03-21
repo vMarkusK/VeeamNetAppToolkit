@@ -17,7 +17,7 @@ function New-VeeamNetappVolume {
 
     .EXAMPLE
     New-VeeamNetappVolume -NFS -IP 10.0.2.16 -ExportPolicyName veeam -VolName vol_nfs_01 -VolSize 1 -CreateBackupJob -VeeamBackupRepo 'Default Backup Repository' -VeeamCacheRepo 'Default Backup Repository' -NetAppAggregate aggr1_data01 -NetAppVserver svm_veeam_nfs -NetAppInterface svm_veeam_nfs_nfs_lif1 -NetAppSnapshotPolicy default
-    
+
     .PARAMETER CreateBackupJob
     Create a Backup Job fot the New NAS Server
 
@@ -259,7 +259,7 @@ function New-VeeamNetappVolume {
     Process {
 
         if ($NFS) {
-    
+
             $ClientMatch = $IP
 
             if(!($NetAppExportPolicy = Get-NcExportPolicy -Name $ExportPolicyName -VserverContext $NetAppVserver )){
@@ -284,7 +284,7 @@ function New-VeeamNetappVolume {
 
             "Add New Veeam NAS Server '$($NetAppInterface.Address):/$($VolName)'"
             $VBRNAServer = Add-VBRNASNFSServer -Path "$($NetAppInterface.Address):/$($VolName)" -CacheRepository $VeeamCacheRepo
-            
+
         }
         elseif ($SMB) {
             "Not Implemented. Sorry..."
@@ -293,11 +293,13 @@ function New-VeeamNetappVolume {
 
         if ($CreateBackupJob) {
             if ($NFS) {
-                $Object = New-VBRNASBackupJobObject -Server $VBRNAServer -Path "$($NetAppInterface.Address):/$($VolName)" 
+                $Object = New-VBRNASBackupJobObject -Server $VBRNAServer -Path "$($NetAppInterface.Address):/$($VolName)"
             }
             elseif ($SMB) {
                 "Not Implemented. Sorry..."
             }
+
+            "Add Veeam Backup Job for NetApp Volume '$VolName' ..."
             $VBRNAServerBackupJob = Add-VBRNASBackupJob -BackupObject $Object -ShortTermBackupRepository $VeeamBackupRepo
         }
 
