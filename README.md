@@ -57,7 +57,14 @@ Connect-VBRServer -Server localhost
 
 
 ```PowerShell
-New-VeeamNetappVolume -NFS -IP 10.0.2.16 -ExportPolicyName veeam -VolName vol_nfs_01Y -VolSize 1 `
+New-VeeamNetappVolume -NFS -IP 10.0.2.16 -ExportPolicyName veeam -VolName vol_nfs_01 -VolSize 1 `
+-VeeamCacheRepo 'Default Backup Repository' -NetAppAggregate aggr1_data01 -NetAppVserver svm_veeam_nfs `
+-NetAppInterface svm_veeam_nfs_nfs_lif1 -NetAppSnapshotPolicy default
+```
+
+```PowerShell
+New-VeeamNetappVolume -NFS -IP 10.0.2.16 -ExportPolicyName veeam -VolName vol_nfs_01 -VolSize 1 `
+-CreateBackupJob -VeeamBackupRepo 'Default Backup Repository' `
 -VeeamCacheRepo 'Default Backup Repository' -NetAppAggregate aggr1_data01 -NetAppVserver svm_veeam_nfs `
 -NetAppInterface svm_veeam_nfs_nfs_lif1 -NetAppSnapshotPolicy default
 ```

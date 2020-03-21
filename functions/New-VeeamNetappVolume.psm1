@@ -15,6 +15,12 @@ function New-VeeamNetappVolume {
     .EXAMPLE
     New-VeeamNetappVolume -NFS -IP 10.0.2.16 -ExportPolicyName veeam -VolName vol_nfs_01 -VolSize 1 -VeeamCacheRepo 'Default Backup Repository' -NetAppAggregate aggr1_data01 -NetAppVserver svm_veeam_nfs -NetAppInterface svm_veeam_nfs_nfs_lif1 -NetAppSnapshotPolicy default
 
+    .EXAMPLE
+    New-VeeamNetappVolume -NFS -IP 10.0.2.16 -ExportPolicyName veeam -VolName vol_nfs_01 -VolSize 1 -CreateBackupJob -VeeamBackupRepo 'Default Backup Repository' -VeeamCacheRepo 'Default Backup Repository' -NetAppAggregate aggr1_data01 -NetAppVserver svm_veeam_nfs -NetAppInterface svm_veeam_nfs_nfs_lif1 -NetAppSnapshotPolicy default
+    
+    .PARAMETER CreateBackupJob
+    Create a Backup Job fot the New NAS Server
+
     .PARAMETER NFS
     NFS Volume
 
@@ -29,6 +35,9 @@ function New-VeeamNetappVolume {
 
     .PARAMETER VolSize
     Size of the new Volume in GB
+
+    .PARAMETER VeeamBackupRepo
+    The Veeam Backup Repo Name
 
     .PARAMETER NetAppAggregateName
      Name of the Aggregate where the Volume is created
@@ -46,6 +55,9 @@ function New-VeeamNetappVolume {
 
     [CmdletBinding()]
     Param (
+        [Parameter(Mandatory=$False, ValueFromPipeline=$False, HelpMessage="Create Backup Job")]
+        [ValidateNotNullorEmpty()]
+            [Switch]$CreateBackupJob,
         [Parameter(Mandatory=$True, ValueFromPipeline=$False, HelpMessage="NFS Volume", ParameterSetName="NFS")]
         [ValidateNotNullorEmpty()]
             [Switch]$NFS,
@@ -84,6 +96,24 @@ function New-VeeamNetappVolume {
         $VeeamCacheRepoAttributeCollection.Add($VeeamCacheRepoValidateSetAttribute)
 
         $VeeamCacheRepoRuntimeParameter = New-Object System.Management.Automation.RuntimeDefinedParameter($VeeamCacheRepoName, [string], $VeeamCacheRepoAttributeCollection)
+
+        # Veeam Backup Repo
+        $VeeamBackupRepoName = 'VeeamBackupRepo'
+        $VeeamBackupRepoAttributeProperty = @{
+            Mandatory = $false;
+            ValueFromPipeline = $False;
+            HelpMessage = 'The Veeam Backup Repo Name'
+        }
+        $VeeamBackupRepoAttribute = New-Object System.Management.Automation.ParameterAttribute -Property $VeeamBackupRepoAttributeProperty
+
+        $VeeamBackupRepoValidateSet = Get-VBRBackupRepository | Select-Object -ExpandProperty Name
+        $VeeamBackupRepoValidateSetAttribute = New-Object System.Management.Automation.ValidateSetAttribute($VeeamBackupRepoValidateSet)
+
+        $VeeamBackupRepoAttributeCollection = New-Object System.Collections.ObjectModel.Collection[System.Attribute]
+        $VeeamBackupRepoAttributeCollection.Add($VeeamBackupRepoAttribute)
+        $VeeamBackupRepoAttributeCollection.Add($VeeamBackupRepoValidateSetAttribute)
+
+        $VeeamBackupRepoRuntimeParameter = New-Object System.Management.Automation.RuntimeDefinedParameter($VeeamBackupRepoName, [string], $VeeamBackupRepoAttributeCollection)
 
         # NetApp vServer parameter
         $NetAppVserverName = 'NetAppVserver'
@@ -160,6 +190,9 @@ function New-VeeamNetappVolume {
         # Create and return parameter dictionary
         $RuntimeParameterDictionary = New-Object System.Management.Automation.RuntimeDefinedParameterDictionary
         $RuntimeParameterDictionary.Add($VeeamCacheRepoName, $VeeamCacheRepoRuntimeParameter)
+        if ($CreateBackupJob){
+                $RuntimeParameterDictionary.Add($VeeamBackupRepoName, $VeeamBackupRepoRuntimeParameter)
+        }
         $RuntimeParameterDictionary.Add($NetAppAggregateName, $NetAppAggregateRuntimeParameter)
         $RuntimeParameterDictionary.Add($NetAppVserverName, $NetAppVserverRuntimeParameter)
         $RuntimeParameterDictionary.Add($NetAppInterfaceName, $NetAppInterfaceRuntimeParameter)
@@ -172,6 +205,9 @@ function New-VeeamNetappVolume {
 
         # Assign DynamicParams to actual variables
         $VeeamCacheRepoName = $PsBoundParameters[$VeeamCacheRepoName]
+        if ($VeeamBackupRepoName){
+            $VeeamBackupRepoName = $PsBoundParameters[$VeeamBackupRepoName]
+        }
         $NetAppAggregateName = $PsBoundParameters[$NetAppAggregateName]
         $NetAppVserverName = $PsBoundParameters[$NetAppVserverName]
         $NetAppInterfaceName = $PsBoundParameters[$NetAppInterfaceName]
@@ -181,6 +217,12 @@ function New-VeeamNetappVolume {
         try {
             $VeeamCacheRepo = Get-VBRBackupRepository -Name $VeeamCacheRepoName
         }catch{ Throw "Failed to get Veeam Cache Repo" }
+
+        if ($VeeamBackupRepoName){
+            try {
+                $VeeamBackupRepo = Get-VBRBackupRepository -Name $VeeamBackupRepoName
+            }catch{ Throw "Failed to get Veeam Backup Repo" }
+        }
 
         try {
             $NetAppAggr = Get-NcAggr -Name $NetAppAggregateName
@@ -218,7 +260,6 @@ function New-VeeamNetappVolume {
 
         if ($NFS) {
     
-            #$ClientMatch = $IPs -join ","
             $ClientMatch = $IP
 
             if(!($NetAppExportPolicy = Get-NcExportPolicy -Name $ExportPolicyName -VserverContext $NetAppVserver )){
@@ -242,14 +283,24 @@ function New-VeeamNetappVolume {
             $NetAppVolume | Set-NcVolOption -Key guarantee -Value none
 
             "Add New Veeam NAS Server '$($NetAppInterface.Address):/$($VolName)'"
-            $VBRNASNFSServer = Add-VBRNASNFSServer -Path "$($NetAppInterface.Address):/$($VolName)" -CacheRepository $VeeamCacheRepo
+            $VBRNAServer = Add-VBRNASNFSServer -Path "$($NetAppInterface.Address):/$($VolName)" -CacheRepository $VeeamCacheRepo
             
         }
         elseif ($SMB) {
-
             "Not Implemented. Sorry..."
-
         }
+        else { Throw "No Volume Type choosen!"}
+
+        if ($CreateBackupJob) {
+            if ($NFS) {
+                $Object = New-VBRNASBackupJobObject -Server $VBRNAServer -Path "$($NetAppInterface.Address):/$($VolName)" 
+            }
+            elseif ($SMB) {
+                "Not Implemented. Sorry..."
+            }
+            $VBRNAServerBackupJob = Add-VBRNASBackupJob -BackupObject $Object -ShortTermBackupRepository $VeeamBackupRepo
+        }
+
     }
 
 }
