@@ -6,17 +6,20 @@ function New-VeeamNetappVolume {
     .NOTES
     File Name  : New-VeeamNetappVolume.psm1
     Author     : Markus Kraus
-    Version    : 0.1
+    Version    : 0.2
     State      : Dev
 
     .LINK
     https://mycloudrevolution.com/
 
     .EXAMPLE
-    New-VeeamNetappVolume -VeeamCacheRepo 'Default Backup Repository' -VolType NFS -IP 10.0.2.16 -ExportPolicyName veeam -VolName vol_nfs_001 -VolSize 1 -NetAppAggregate aggr1_data01 -NetAppVserver svm_veeam_nfs -NetAppInterface svm_veeam_nfs_nfs_lif1 -NetAppSnapshotPolicy default
+    New-VeeamNetappVolume -NFS -IP 10.0.2.16 -ExportPolicyName veeam -VolName vol_nfs_01 -VolSize 1 -VeeamCacheRepo 'Default Backup Repository' -NetAppAggregate aggr1_data01 -NetAppVserver svm_veeam_nfs -NetAppInterface svm_veeam_nfs_nfs_lif1 -NetAppSnapshotPolicy default
 
-    .PARAMETER Type
-    Type of the new Volume
+    .PARAMETER NFS
+    NFS Volume
+
+    .PARAMETER SMB
+    SMB Volume
 
     .PARAMETER IP
     IP for the NFS Export
@@ -43,14 +46,16 @@ function New-VeeamNetappVolume {
 
     [CmdletBinding()]
     Param (
-        [Parameter(Mandatory=$True, ValueFromPipeline=$False, HelpMessage="Type of the new Volume")]
+        [Parameter(Mandatory=$True, ValueFromPipeline=$False, HelpMessage="NFS Volume", ParameterSetName="NFS")]
         [ValidateNotNullorEmpty()]
-        [ValidateSet("NFS")]
-            [String]$VolType,
-        [Parameter(Mandatory=$True, ValueFromPipeline=$False, HelpMessage="IP for the NFS Export")]
+            [Switch]$NFS,
+        [Parameter(Mandatory=$True, ValueFromPipeline=$False, HelpMessage="SMB Volume", ParameterSetName="SMB")]
+        [ValidateNotNullorEmpty()]
+            [Switch]$SMB,
+        [Parameter(Mandatory=$True, ValueFromPipeline=$False, HelpMessage="IP for the NFS Export", ParameterSetName="NFS")]
         [ValidateNotNullorEmpty()]
             [ipaddress]$IP,
-        [Parameter(Mandatory=$True, ValueFromPipeline=$False, HelpMessage="Name of the Export Policy")]
+        [Parameter(Mandatory=$True, ValueFromPipeline=$False, HelpMessage="Name of the Export Policy", ParameterSetName="NFS")]
         [ValidateNotNullorEmpty()]
             [String]$ExportPolicyName,
         [Parameter(Mandatory=$True, ValueFromPipeline=$False, HelpMessage="Name of the new Volume")]
@@ -211,32 +216,40 @@ function New-VeeamNetappVolume {
 
     Process {
 
-        #$ClientMatch = $IPs -join ","
-        $ClientMatch = $IP
+        if ($NFS) {
+    
+            #$ClientMatch = $IPs -join ","
+            $ClientMatch = $IP
 
-        if(!($NetAppExportPolicy = Get-NcExportPolicy -Name $ExportPolicyName -VserverContext $NetAppVserver )){
-            "Create new NetApp Export Policy '$($ExportPolicyName)' on SVM '$($NetAppVserver.Name)' ..."
-            $NetAppExportPolicy = New-NcExportPolicy -Name $ExportPolicyName -VserverContext $NetAppVserver
-            $NetAppExportRule = New-NcExportRule -VserverContext $NetAppVserver  -Policy $NetAppExportPolicy.PolicyName -ClientMatch $ClientMatch `
-            -Protocol NFS -Index 1 -SuperUserSecurityFlavor any -ReadOnlySecurityFlavor any -ReadWriteSecurityFlavor any
-        }else{
-            "NetApp Export Policy '$($ExportPolicyName)' on SVM '$($NetAppVserver.Name)' aleady exists, add IP"
-            $NetAppExportRule = New-NcExportRule -VserverContext $NetAppVserver  -Policy $NetAppExportPolicy.PolicyName -ClientMatch $ClientMatch `
-            -Protocol NFS -Index 1 -SuperUserSecurityFlavor any -ReadOnlySecurityFlavor any -ReadWriteSecurityFlavor any
+            if(!($NetAppExportPolicy = Get-NcExportPolicy -Name $ExportPolicyName -VserverContext $NetAppVserver )){
+                "Create new NetApp Export Policy '$($ExportPolicyName)' on SVM '$($NetAppVserver.Name)' ..."
+                $NetAppExportPolicy = New-NcExportPolicy -Name $ExportPolicyName -VserverContext $NetAppVserver
+                $NetAppExportRule = New-NcExportRule -VserverContext $NetAppVserver  -Policy $NetAppExportPolicy.PolicyName -ClientMatch $ClientMatch `
+                -Protocol NFS -Index 1 -SuperUserSecurityFlavor any -ReadOnlySecurityFlavor any -ReadWriteSecurityFlavor any
+            }else{
+                "NetApp Export Policy '$($ExportPolicyName)' on SVM '$($NetAppVserver.Name)' aleady exists, add IP"
+                $NetAppExportRule = New-NcExportRule -VserverContext $NetAppVserver  -Policy $NetAppExportPolicy.PolicyName -ClientMatch $ClientMatch `
+                -Protocol NFS -Index 1 -SuperUserSecurityFlavor any -ReadOnlySecurityFlavor any -ReadWriteSecurityFlavor any
 
-            }
+                }
 
-        "Create new NetApp Volume '$VolName' on Aggregate '$($NetAppAggr.AggregateName)' ..."
-        $NetAppVolume = New-NcVol -VserverContext $NetAppVserver -Name $VolName -Aggregate $NetAppAggr.AggregateName -JunctionPath $("/" + $VolName) `
-        -ExportPolicy $ExportPolicyName -Size $VolSizeByte -SnapshotReserve 20 -SnapshotPolicy $NetAppSnapshotPolicy.Policy
+            "Create new NetApp Volume '$VolName' on Aggregate '$($NetAppAggr.AggregateName)' ..."
+            $NetAppVolume = New-NcVol -VserverContext $NetAppVserver -Name $VolName -Aggregate $NetAppAggr.AggregateName -JunctionPath $("/" + $VolName) `
+            -ExportPolicy $ExportPolicyName -Size $VolSizeByte -SnapshotReserve 20 -SnapshotPolicy $NetAppSnapshotPolicy.Policy
 
-        "Set Advanced Options for NetApp Volume '$VolName' ..."
-        $NetAppVolume | Set-NcVolOption -Key fractional_reserve -Value 0
-        $NetAppVolume | Set-NcVolOption -Key guarantee -Value none
+            "Set Advanced Options for NetApp Volume '$VolName' ..."
+            $NetAppVolume | Set-NcVolOption -Key fractional_reserve -Value 0
+            $NetAppVolume | Set-NcVolOption -Key guarantee -Value none
 
-        "Add New Veeam NAS Server '$($NetAppInterface.Address):/$($VolName)'"
-        $VBRNASNFSServer = Add-VBRNASNFSServer -Path "$($NetAppInterface.Address):/$($VolName)" -CacheRepository $VeeamCacheRepo
+            "Add New Veeam NAS Server '$($NetAppInterface.Address):/$($VolName)'"
+            $VBRNASNFSServer = Add-VBRNASNFSServer -Path "$($NetAppInterface.Address):/$($VolName)" -CacheRepository $VeeamCacheRepo
+            
+        }
+        elseif ($SMB) {
 
+            "Not Implemented. Sorry..."
+
+        }
     }
 
 }

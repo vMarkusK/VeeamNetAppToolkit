@@ -11,9 +11,15 @@ schema: 2.0.0
 
 ## SYNTAX
 
+### NFS
 ```
-New-VeeamNetappVolume [-VolType] <String> [-IP] <IPAddress> [-ExportPolicyName] <String> [-VolName] <String>
- [-VolSize] <Int32> [<CommonParameters>]
+New-VeeamNetappVolume [-NFS] -IP <IPAddress> -ExportPolicyName <String> -VolName <String> -VolSize <Int32>
+ [<CommonParameters>]
+```
+
+### SMB
+```
+New-VeeamNetappVolume [-SMB] -VolName <String> -VolSize <Int32> [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -23,22 +29,37 @@ Creates a new a NetApp Volume and adds it to Veeam Configuration as a NAS Backup
 
 ### EXAMPLE 1
 ```
-New-VeeamNetappVolume -VeeamCacheRepo 'Default Backup Repository' -VolType NFS -IP 10.0.2.16 -ExportPolicyName veeam -VolName vol_nfs_001 -VolSize 1 -NetAppAggregate aggr1_data01 -NetAppVserver svm_veeam_nfs -NetAppInterface svm_veeam_nfs_nfs_lif1 -NetAppSnapshotPolicy default
+New-VeeamNetappVolume -NFS -IP 10.0.2.16 -ExportPolicyName veeam -VolName vol_nfs_01 -VolSize 1 -VeeamCacheRepo 'Default Backup Repository' -NetAppAggregate aggr1_data01 -NetAppVserver svm_veeam_nfs -NetAppInterface svm_veeam_nfs_nfs_lif1 -NetAppSnapshotPolicy default
 ```
 
 ## PARAMETERS
 
-### -VolType
-Type of the new Volume
+### -NFS
+NFS Volume
 
 ```yaml
-Type: String
-Parameter Sets: (All)
+Type: SwitchParameter
+Parameter Sets: NFS
 Aliases:
 
 Required: True
-Position: 1
-Default value: None
+Position: Named
+Default value: False
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -SMB
+SMB Volume
+
+```yaml
+Type: SwitchParameter
+Parameter Sets: SMB
+Aliases:
+
+Required: True
+Position: Named
+Default value: False
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -48,11 +69,11 @@ IP for the NFS Export
 
 ```yaml
 Type: IPAddress
-Parameter Sets: (All)
+Parameter Sets: NFS
 Aliases:
 
 Required: True
-Position: 2
+Position: Named
 Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
@@ -63,11 +84,11 @@ Name of the Export Policy
 
 ```yaml
 Type: String
-Parameter Sets: (All)
+Parameter Sets: NFS
 Aliases:
 
 Required: True
-Position: 3
+Position: Named
 Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
@@ -82,7 +103,7 @@ Parameter Sets: (All)
 Aliases:
 
 Required: True
-Position: 4
+Position: Named
 Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
@@ -97,7 +118,7 @@ Parameter Sets: (All)
 Aliases:
 
 Required: True
-Position: 5
+Position: Named
 Default value: 0
 Accept pipeline input: False
 Accept wildcard characters: False
@@ -113,7 +134,7 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 ## NOTES
 File Name  : New-VeeamNetappVolume.psm1
 Author     : Markus Kraus
-Version    : 0.1
+Version    : 0.2
 State      : Dev
 
 ## RELATED LINKS
