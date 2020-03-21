@@ -13,13 +13,13 @@ schema: 2.0.0
 
 ### NFS
 ```
-New-VeeamNetappVolume [-NFS] -IP <IPAddress> -ExportPolicyName <String> -VolName <String> -VolSize <Int32>
- [<CommonParameters>]
+New-VeeamNetappVolume [-CreateBackupJob] [-NFS] -IP <IPAddress> -ExportPolicyName <String> -VolName <String>
+ -VolSize <Int32> [<CommonParameters>]
 ```
 
 ### SMB
 ```
-New-VeeamNetappVolume [-SMB] -VolName <String> -VolSize <Int32> [<CommonParameters>]
+New-VeeamNetappVolume [-CreateBackupJob] [-SMB] -VolName <String> -VolSize <Int32> [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -32,7 +32,27 @@ Creates a new a NetApp Volume and adds it to Veeam Configuration as a NAS Backup
 New-VeeamNetappVolume -NFS -IP 10.0.2.16 -ExportPolicyName veeam -VolName vol_nfs_01 -VolSize 1 -VeeamCacheRepo 'Default Backup Repository' -NetAppAggregate aggr1_data01 -NetAppVserver svm_veeam_nfs -NetAppInterface svm_veeam_nfs_nfs_lif1 -NetAppSnapshotPolicy default
 ```
 
+### EXAMPLE 2
+```
+New-VeeamNetappVolume -NFS -IP 10.0.2.16 -ExportPolicyName veeam -VolName vol_nfs_01 -VolSize 1 -CreateBackupJob -VeeamBackupRepo 'Default Backup Repository' -VeeamCacheRepo 'Default Backup Repository' -NetAppAggregate aggr1_data01 -NetAppVserver svm_veeam_nfs -NetAppInterface svm_veeam_nfs_nfs_lif1 -NetAppSnapshotPolicy default
+```
+
 ## PARAMETERS
+
+### -CreateBackupJob
+Create a Backup Job fot the New NAS Server
+
+```yaml
+Type: SwitchParameter
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: Named
+Default value: False
+Accept pipeline input: False
+Accept wildcard characters: False
+```
 
 ### -NFS
 NFS Volume
