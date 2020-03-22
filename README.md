@@ -13,10 +13,6 @@ Markus Kraus [@vMarkus_K](https://twitter.com/vMarkus_K)
 
 my cloud-(r)evolution [mycloudrevolution.com](http://mycloudrevolution.com/)
 
-### Project WebSite
-
-[mycloudrevolution.com](http://mycloudrevolution.com/)
-
 ### Project Repository
 
 [GitHub - VeeamNetAppToolkit](https://github.com/mycloudrevolution/vSphereNetAppToolkit)
@@ -25,11 +21,15 @@ my cloud-(r)evolution [mycloudrevolution.com](http://mycloudrevolution.com/)
 
 [Read the Docs - VeeamNetAppToolkit](https://veeamnetapptoolkit.readthedocs.io)
 
+[Wiki- VeeamNetAppToolkit](https://github.com/mycloudrevolution/VeeamNetAppToolkit/wiki)
+
 ### Project Description
 
 This Module helps to automate some basic steps that interact between Veeam and NetApp ONTAP.
 
-## Requirements
+## Prequirements
+
+For further details see [Wiki - Prequirements](https://github.com/mycloudrevolution/VeeamNetAppToolkit/wiki#prerequirements)
 
 ### NetApp
 
@@ -53,18 +53,4 @@ Connect-VBRServer -Server localhost
 
 ### New-VeeamNetappVolume
 
-[![Watch the video](https://img.youtube.com/vi/n-ylGAn14jA/maxresdefault.jpg)](https://www.youtube.com/watch?v=n-ylGAn14jA)
-
-
-```PowerShell
-New-VeeamNetappVolume -NFS -IP 10.0.2.16 -ExportPolicyName veeam -VolName vol_nfs_01 -VolSize 1 `
--VeeamCacheRepo 'Default Backup Repository' -NetAppAggregate aggr1_data01 -NetAppVserver svm_veeam_nfs `
--NetAppInterface svm_veeam_nfs_nfs_lif1 -NetAppSnapshotPolicy default
-```
-
-```PowerShell
-New-VeeamNetappVolume -NFS -IP 10.0.2.16 -ExportPolicyName veeam -VolName vol_nfs_01 -VolSize 1 `
--CreateBackupJob -VeeamBackupRepo 'Default Backup Repository' `
--VeeamCacheRepo 'Default Backup Repository' -NetAppAggregate aggr1_data01 -NetAppVserver svm_veeam_nfs `
--NetAppInterface svm_veeam_nfs_nfs_lif1 -NetAppSnapshotPolicy default
-```
+[Wiki- New-VeeamNetappVolume](https://github.com/mycloudrevolution/VeeamNetAppToolkit/wiki/New-VeeamNetappVolume)
