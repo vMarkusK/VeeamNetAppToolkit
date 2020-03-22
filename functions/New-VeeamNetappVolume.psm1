@@ -293,7 +293,7 @@ function New-VeeamNetappVolume {
 
         if ($CreateBackupJob) {
             if ($NFS) {
-                $Object = New-VBRNASBackupJobObject -Server $VBRNAServer -Path "$($NetAppInterface.Address):/$($VolName)"
+                $Object = New-VBRNASBackupJobObject -Server $VBRNAServer -Path $VBRNAServer.Path
             }
             elseif ($SMB) {
                 "Not Implemented. Sorry..."
