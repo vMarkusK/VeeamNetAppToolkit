@@ -29,7 +29,7 @@ This Module helps to automate some basic steps that interact between Veeam and N
 
 ## Prequirements
 
-For further details see [Wiki - Prequirements](https://github.com/mycloudrevolution/VeeamNetAppToolkit/wiki#prerequirements)
+For further details see [Wiki - Prequirements](https://github.com/mycloudrevolution/VeeamNetAppToolkit/wiki#prerequirements).
 
 ### NetApp
 
@@ -53,4 +53,4 @@ Connect-VBRServer -Server localhost
 
 ### New-VeeamNetappVolume
 
-[Wiki- New-VeeamNetappVolume](https://github.com/mycloudrevolution/VeeamNetAppToolkit/wiki/New-VeeamNetappVolume)
+[Wiki - New-VeeamNetappVolume](https://github.com/mycloudrevolution/VeeamNetAppToolkit/wiki/New-VeeamNetappVolume)
