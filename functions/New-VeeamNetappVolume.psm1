@@ -6,7 +6,7 @@ function New-VeeamNetappVolume {
     .NOTES
     File Name  : New-VeeamNetappVolume.psm1
     Author     : Markus Kraus
-    Version    : 0.2
+    Version    : 0.3
     State      : Dev
 
     .LINK
@@ -79,6 +79,10 @@ function New-VeeamNetappVolume {
     )
 
     DynamicParam {
+        # Verification
+        Test-NetappConnection
+        Test-VeeamConnection
+        
         # Veeam Cache Repo
         $VeeamCacheRepoName = 'VeeamCacheRepo'
         $VeeamCacheRepoAttributeProperty = @{
@@ -202,6 +206,8 @@ function New-VeeamNetappVolume {
     }
 
     Begin {
+
+        
 
         # Assign DynamicParams to actual variables
         $VeeamCacheRepoName = $PsBoundParameters[$VeeamCacheRepoName]
